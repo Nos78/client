@@ -1049,6 +1049,13 @@ void ownCloudGui::raiseDialog(QWidget *raiseWidget)
     }
     window->showNormal();
     window->raise();
+    if (qobject_cast<QDialog*>(raiseWidget) && raiseWidget->parentWidget() != window) {
+        OC_ASSERT_X(raiseWidget->parentWidget() && raiseWidget->parentWidget() == window, "raiseDialog should only be called with modal");
+        if (raiseWidget->parentWidget()) {
+            qCWarning(lcApplication) << "Replacing parent" << raiseWidget->parentWidget() << "with" << window;
+        }
+        raiseWidget->setParent(window);
+    }
     raiseWidget->showNormal();
     raiseWidget->raise();
     window->activateWindow();
