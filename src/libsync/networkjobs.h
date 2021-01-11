@@ -423,8 +423,16 @@ public:
     explicit SimpleNetworkJob(AccountPtr account, QObject *parent = nullptr);
 
     QNetworkReply *startRequest(const QByteArray &verb, const QUrl &url,
-        QNetworkRequest req = QNetworkRequest(),
+        const QNetworkRequest &req = QNetworkRequest(),
         QIODevice *requestBody = nullptr);
+
+    QNetworkReply *startRequest(const QByteArray &verb, const QUrl &url,
+        const QNetworkRequest &req,
+        const QUrlQuery &arguments);
+
+    QNetworkReply *startRequest(const QByteArray &verb, const QUrl &url,
+        const QNetworkRequest &req,
+        const QJsonObject &arguments);
 
 signals:
     void finishedSignal(QNetworkReply *reply);

@@ -925,11 +925,31 @@ SimpleNetworkJob::SimpleNetworkJob(AccountPtr account, QObject *parent)
 }
 
 QNetworkReply *SimpleNetworkJob::startRequest(const QByteArray &verb, const QUrl &url,
-    QNetworkRequest req, QIODevice *requestBody)
+    const QNetworkRequest &req, QIODevice *requestBody)
 {
     auto reply = sendRequest(verb, url, req, requestBody);
     start();
     return reply;
+}
+
+QNetworkReply *SimpleNetworkJob::startRequest(const QByteArray &verb, const QUrl &url, const QNetworkRequest &req, const QUrlQuery &arguments)
+{
+    // not a leak
+    auto requestBody = new QBuffer {};
+    requestBody->setData(arguments.query(QUrl::FullyEncoded).toUtf8());
+    auto newReq = req;
+    newReq.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded; charset=UTF-8"));
+    return startRequest(verb, url, newReq, requestBody);
+}
+
+QNetworkReply *SimpleNetworkJob::startRequest(const QByteArray &verb, const QUrl &url, const QNetworkRequest &req, const QJsonObject &arguments)
+{
+    // not a leak
+    auto requestBody = new QBuffer {};
+    requestBody->setData(QJsonDocument(arguments).toJson());
+    auto newReq = req;
+    newReq.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/json"));
+    return startRequest(verb, url, newReq, requestBody);
 }
 
 bool SimpleNetworkJob::finished()

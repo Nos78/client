@@ -87,6 +87,7 @@ public:
      */
     virtual void forgetSensitiveData() = 0;
 
+    static QString keychainServerWhideKey(Account *acc, const QString &key);
     static QString keychainKey(const QString &url, const QString &user, const QString &accountId);
 
     /** If the job need to be restarted or queue, this does it and returns true. */
